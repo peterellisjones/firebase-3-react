@@ -1,4 +1,4 @@
-# typescript-firebase-react
+# firebase-3-react
 
 Simple library to create React containers which bind Firebase data to components. Also supports caching in local storage. Uses the Firebase 3 client.
 
