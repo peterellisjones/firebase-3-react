@@ -206,3 +206,23 @@ auth.onAuthStateChanged((user: firebase.User) => {
   }
 });
 ```
+
+## Webpack
+
+If you use webpack with the typescript loader, you'll need to include the path `node_modules/firebase-3-react` to the list of directories parsed by the loader. eg:
+
+```javascript
+const config = {
+  module: {
+    loaders: [{
+      test: /\.tsx?$/,
+      loaders: ['babel-loader', 'ts-loader', 'tslint-loader'],
+      include: [
+        path.join(__dirname, 'src'),
+        path.join(__dirname, 'node_modules', 'firebase-3-react') // add node_modules/firebase-3-react
+      ]
+    }
+  }
+  // ... etc
+}
+```
