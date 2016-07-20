@@ -2,9 +2,11 @@
   "name": "firebase-3-react",
   "version": "1.0.0",
   "description": "Simple library to create React containers which bind Firebase data to components. Also supports caching in local storage.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --outDir dist",
+    "lint": "tslint src/**/*",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,14 @@
     "react": "15.2.1"
   },
   "devDependencies": {
+    "babel-jest": "13.2.2",
+    "babel-polyfill": "6.9.1",
+    "babel-preset-es2015": "6.9.0",
+    "babel-preset-react": "6.11.1",
+    "jest": "13.2.3",
+    "jest-cli": "13.2.3",
+    "react-addons-test-utils": "15.2.1",
+    "react-dom": "15.2.1",
     "tslint": "3.13.0",
     "typescript": "1.8.10"
   }

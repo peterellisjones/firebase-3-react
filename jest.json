@@ -1,0 +1,6 @@
+{
+  "automock": false,
+  "browser": true,
+  "verbose": true,
+  "testRegex": "tests/.*\\.js$"
+}

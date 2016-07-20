@@ -30,23 +30,24 @@ interface IFirebaseQuery {
   };
 }
 
-interface IProps {
-  firebaseRef: string;
-  firebaseQuery?: IFirebaseQuery;
-  cacheLocally?: boolean;
-  loader?: (any) => JSX.Element;
-}
-
 interface IState<T>{
   status: Status;
   data?: { [id: string]: T };
 }
 
-export function bindToCollection<T, X>(innerKlass: React.ComponentClass<{data: { [id: string]: T }} & X>): React.ComponentClass<IProps & X> {
-  return class extends React.Component<IProps & X, IState<T>> {
+type InnerProps<T, P> = { data: { [id: string]: T }} & P;
+type OuterProps<P> = {
+  firebaseRef: string;
+  firebaseQuery?: IFirebaseQuery;
+  cacheLocally?: boolean;
+  loader?: (props: P) => JSX.Element;
+} & P;
+
+export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerProps<T, P>>): React.ComponentClass<OuterProps<P>> {
+  return class extends React.Component<OuterProps<P>, IState<T>> {
     private unbind: () => void;
 
-    constructor(props: IProps & X) {
+    constructor(props: OuterProps<P>) {
       super(props);
 
       this.state = { status: Status.Pending };
@@ -73,25 +74,32 @@ export function bindToCollection<T, X>(innerKlass: React.ComponentClass<{data: {
     }
 
     public render(): JSX.Element {
+      const innerProps = this.innerProps();
       if (this.state.status === Status.Pending) {
+        if (this.props.loader) {
+          return this.props.loader(innerProps);
+        }
         return null;
       }
 
-      // copy all props
-      const innerProps = { data: this.state.data };
-      for (const id of Object.keys(this.props)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery") {
-          innerProps[id] = this.props[id];
-        }
-      }
-
-      return React.createElement<{data: { [id: string]: T }} & X>(innerKlass, innerProps as {data: { [id: string]: T }} & X);
+      return React.createElement<InnerProps<T, P>>(innerKlass, innerProps);
     }
 
     public componentWillUnmount() {
       if (this.unbind) {
         this.unbind();
       }
+    }
+
+    private innerProps(): InnerProps<T, P> {
+      const innerProps = { data: this.state.data } as InnerProps<T, P> ;
+      for (const id of Object.keys(this.props)) {
+        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery") {
+          innerProps[id] = this.props[id];
+        }
+      }
+
+      return innerProps;
     }
 
     private updateData(snapshot: firebase.database.DataSnapshot) {
@@ -104,7 +112,7 @@ export function bindToCollection<T, X>(innerKlass: React.ComponentClass<{data: {
       this.setState({ data: val, status: Status.LoadedFromFirebase });
 
       if (this.props.cacheLocally) {
-        saveToLocalStorage(this.props.firebaseRef, this.props.firebaseQuery, val);
+        saveToLocalStorage<{ [id: string]: T }>(this.props.firebaseRef, this.props.firebaseQuery, val);
       }
     }
   };

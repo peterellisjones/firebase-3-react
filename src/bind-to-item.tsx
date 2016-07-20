@@ -9,10 +9,10 @@ const enum Status {
   LoadedFromFirebase
 }
 
-interface IProps {
+interface IProps<P> {
   firebaseRef: string;
   cacheLocally?: boolean;
-  loader?: (any) => JSX.Element;
+  loader?: (props: P) => JSX.Element;
 }
 
 interface IState<T>{
@@ -20,11 +20,19 @@ interface IState<T>{
   data?: T;
 }
 
-export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>): React.ComponentClass<IProps & P> {
-  return class extends React.Component<IProps & P, IState<T>> {
+type InnerProps<T, P> = { data: T} & P;
+type OuterProps<P> = {
+  firebaseRef: string;
+  cacheLocally?: boolean;
+  loader?: (props: P) => JSX.Element;
+} & P;
+
+
+export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>): React.ComponentClass<OuterProps<P>> {
+  return class extends React.Component<OuterProps<P>, IState<T>> {
     private unbind: () => void;
 
-    constructor(props: IProps & P) {
+    constructor(props: OuterProps<P>) {
       super(props);
 
       this.state = { status: Status.Pending };
@@ -48,13 +56,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
     }
 
     public render(): JSX.Element {
-      // copy all props
-      const innerProps = { data: this.state.data };
-      for (const id of Object.keys(this.props)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "loader") {
-          innerProps[id] = this.props[id];
-        }
-      }
+      const innerProps = this.innerProps();
 
       if (this.state.status === Status.Pending) {
         if (this.props.loader) {
@@ -63,15 +65,24 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
         return null;
       }
 
-      innerProps.data = this.state.data;
-
-      return React.createElement<{data: T} & P>(innerKlass, innerProps as {data: T} & P);
+      return React.createElement<InnerProps<T, P>>(innerKlass, innerProps);
     }
 
     public componentWillUnmount() {
       if (this.unbind) {
         this.unbind();
       }
+    }
+
+    private innerProps(): InnerProps<T, P> {
+      const innerProps = { data: this.state.data } as InnerProps<T, P> ;
+      for (const id of Object.keys(this.props)) {
+        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery") {
+          innerProps[id] = this.props[id];
+        }
+      }
+
+      return innerProps;
     }
 
     private updateData(snapshot: firebase.database.DataSnapshot) {

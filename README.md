@@ -137,7 +137,7 @@ class Comments extends React.Component<Props, {}> {
     const comments = this.props.data;
     return Object.keys(comments).map((id: string): JSX.Element => {
       const comment = comments[id];
-      return <div className="comment">{comment}</div>
+      return <div key={id} className="comment">{comment}</div>
     });
   }
 }
