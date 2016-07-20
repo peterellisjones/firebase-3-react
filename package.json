@@ -1,6 +1,6 @@
 {
   "name": "firebase-3-react",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Simple library to bind Firebase data to React components. Also supports caching in local storage.",
   "main": "dist/index.js",
   "scripts": {
@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/peterellisjones/firebase-3-react#readme",
   "dependencies": {
-    "firebase": "3.2.0",
-    "react": "15.2.1"
+    "firebase": "3.2.0"
+  },
+  "peerDependencies": {
+    "react": "15.x"
   },
   "devDependencies": {
     "babel-jest": "13.2.2",

@@ -42,7 +42,7 @@ init({
 
 ## `bindToItem<T, P>`
 
-`bindToItem` creates a one-way binding from an item at a firebase database reference. `T` is the type of the data returned from Firebase. `P` is the type of any other props given to the component.
+`bindToItem` creates a one-way binding from an item at a firebase database reference. `T` is the type of the data returned from Firebase. `P` should include any other props you wish to pass to the component.
 
 **Example:**
 
@@ -113,11 +113,11 @@ Where `firebaseRef` is the [Firebase database reference](https://firebase.google
 
 Here are the properties that can be passed to a bound component created using `bindToItem`:
 
-* **firebaseRef** (required) The Firebase database reference for the data. This data will be passed to the wrapped component as `{ data: T }`, and will re-render when updated.
+* **firebaseRef** (string, required) The Firebase database reference for the data. This data will be passed to the wrapped component as `{ data: T }`, and will re-render when updated.
 
-* **cacheLocally** (optional) Set this to `true` to cache the data in localStorage. The data will still be fetched from Firebase, but any cached data will be passed to the wrapped component while waiting for the response from Firebase.
+* **cacheLocally** (boolean, optional) Set this to `true` to cache the data in localStorage. The data will still be fetched from Firebase, but any cached data will be passed to the wrapped component while waiting for the response from Firebase.
 
-* **loader** (optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
+* **loader** (function, optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
 
 * **...anything else...** Any other properties will be passed directly to the wrapped component.
 
@@ -211,13 +211,13 @@ The component will automatically re-render whenever the query results are update
 
 Here are the properties that can be passed to a bound component created using `bindToCollection`:
 
-* **firebaseRef** (required) The Firebase database reference for the data. This data will be passed to the wrapped component as `{ data: T }`, and will re-render when updated.
+* **firebaseRef** (string, required) The Firebase database reference for the data. This data will be passed to the wrapped component as `{ data: T }`, and will re-render when updated.
 
-* **firebaseQuery** (optional) A Firebase query to use to filter the results. See https://github.com/peterellisjones/firebase-3-react/blob/master/src/bind-to-collection.tsx for a list of arguments that can be passed to firebaseQuery.
+* **firebaseQuery** (object, optional) A Firebase query to use to filter the results. See https://github.com/peterellisjones/firebase-3-react/blob/master/src/bind-to-collection.tsx for a list of arguments that can be passed to firebaseQuery.
 
-* **cacheLocally** (optional) Set this to `true` to cache the data in localStorage. The data will still be fetched from Firebase, but any cached data will be passed to the wrapped component while waiting for the response from Firebase.
+* **cacheLocally** (boolean, optional) Set this to `true` to cache the data in localStorage. The data will still be fetched from Firebase, but any cached data will be passed to the wrapped component while waiting for the response from Firebase.
 
-* **loader** (optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
+* **loader** (function, optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
 
 * **...anything else...** Any other properties will be passed directly to the wrapped component.
 

@@ -119,7 +119,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
 }
 
 function localStorageKey(firebaseRef: string, query: IFirebaseQuery): string {
-  return `firebase-cache-collection:${firebaseRef}:${JSON.stringify(query)}`;
+  return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
 }
 
 function saveToLocalStorage<T>(firebaseRef: string, query: IFirebaseQuery, data: T) {
