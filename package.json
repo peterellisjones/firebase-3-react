@@ -1,0 +1,27 @@
+{
+  "name": "typescript-firebase-react",
+  "version": "1.0.0",
+  "description": "Simple library to create React containers to which Firebase data to components. Also supports caching in local storage.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peterellisjones/typescript-firebase-react.git"
+  },
+  "keywords": [
+    "typescript",
+    "react",
+    "firebase"
+  ],
+  "author": "Peter Ellis Jones",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peterellisjones/typescript-firebase-react/issues"
+  },
+  "homepage": "https://github.com/peterellisjones/typescript-firebase-react#readme",
+  "dependencies": {
+    "react": "15.2.1"
+  }
+}
