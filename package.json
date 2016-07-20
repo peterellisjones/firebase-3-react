@@ -22,6 +22,11 @@
   },
   "homepage": "https://github.com/peterellisjones/typescript-firebase-react#readme",
   "dependencies": {
+    "firebase": "3.2.0",
     "react": "15.2.1"
+  },
+  "devDependencies": {
+    "tslint": "3.13.0",
+    "typescript": "1.8.10"
   }
 }

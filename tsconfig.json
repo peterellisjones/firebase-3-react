@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "removeComments": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
