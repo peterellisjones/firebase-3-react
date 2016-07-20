@@ -12,7 +12,16 @@ npm install firebase-3-react --save
 
 ## Usage
 
-This library was written in Typescript but can be used with either Javascript or Typescript. If using Javascript simply omit the type annotations in the code below.
+This library was written in Typescript but can be used with either Javascript or Typescript. If you are using Typescript, you can import the .ts and .tsx files directly from `node_modules` as follows (note you may need to whitelist this directory with your Typescript compiler, see the end of this readme for how to do this with Webpack):
+
+```typescript
+import { init } from "../node_modules/firebase-3-react/src/index";
+```
+
+If using ES6 Javascript you can import the regular way ie:
+```javascript
+import { init } from "firebase-3-react";
+```
 
 ## `init`
 
@@ -39,6 +48,7 @@ init({
 
 Suppose we have the following React component to display a comment:
 
+**TYPESCRIPT**
 ```typescript
 interface Props { //  Note that the component *MUST* require the prop `data: T;`
   data: string; // data represents the comment to be rendered
@@ -57,6 +67,27 @@ class Comment extends React.Component<Props, {}> {
     return <div>{this.props.data}</div>;
   }
 }
+```
+
+
+**ES6 JAVASCRIPT**
+```javascript
+class Comment extends React.Component {
+  public render() {
+    if (this.verbose) {
+      console.log("Rendering comment");
+    }
+    if (this.fromAdmin) {
+      return <div className="admin-comment">{this.props.data}</div>;
+    }
+    return <div>{this.props.data}</div>;
+  }
+}
+Comment.propTypes = {
+  data: React.PropTypes.string.isRequired,
+  fromAdmin: React.PropTypes.boolean,
+  verbose: React.PropTypes.boolean,
+};
 ```
 
 We can create a component-container bound to this item with the following code:
