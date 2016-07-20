@@ -1,7 +1,7 @@
 import * as React from "react";
 import { database } from "./init";
 
-/// <reference path="react.d.ts" />
+/// <reference path="../react.d.ts" />
 
 const enum Status {
   Pending,

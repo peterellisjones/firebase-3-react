@@ -2,6 +2,14 @@
 
 Simple library to create React [container-components](https://medium.com/@learnreact/container-components-c0e67432e005#.8iw48488z) which bind Firebase data to React components. Also supports caching in local storage. Uses the Firebase 3 client.
 
+## Install
+
+Install with the NPM command:
+
+```
+npm install firebase-3-react --save
+```
+
 ## Usage
 
 This library was written in Typescript but can be used with either Javascript or Typescript. If using Javascript simply omit the type annotations in the code below.
@@ -13,7 +21,7 @@ Use `init` to initialize the Firebase client. `init` *must* be called before `bi
 Example:
 
 ```typescript
-import { init } from "firebase-3-react"
+import { init } from "../node_modules/firebase-3-react/src/index";
 
 init({
   apiKey: "example-api-key",
@@ -54,7 +62,7 @@ class Comment extends React.Component<Props, {}> {
 We can create a component-container bound to this item with the following code:
 
 ```typescript
-import { bindToItem } from "firebase-3-react";
+import { bindToItem } from "../node_modules/firebase-3-react/src/index";
 
 // in Javascript this would simply be: const BoundComment = bindToItem(Comment);
 const BoundComment = bindToItem<string, { fromAdmin: boolean, verbose: boolean }>(Comment);
@@ -146,7 +154,7 @@ class Comments extends React.Component<Props, {}> {
 We can create a component-container bound to a list of comments with the following code:
 
 ```typescript
-import { bindToCollection } from "firebase-3-react";
+import { bindToCollection } from "../node_modules/firebase-3-react/src/index";
 
 // in Javascript this would simply be: const BoundComments = bindToItem(Comment);
 const BoundComments = bindToCollection<string, { fromAdmin: boolean, verbose: boolean }>(Comments);
@@ -190,7 +198,7 @@ Example:
 
 ```typescript
 /// <reference path="node_modules/firebase-3-react/firebase.d.ts" />
-import { auth } from "firebase-3-react"
+import { auth } from "../node_modules/firebase-3-react/src/index";
 
 auth.onAuthStateChanged((user: firebase.User) => {
   if (user && user.uid) {
