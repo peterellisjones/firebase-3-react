@@ -90,7 +90,7 @@ Comment.propTypes = {
 };
 ```
 
-We can create a component-container bound to this item with the following code:
+We can create a container-component bound to this item with the following code:
 
 ```typescript
 import { bindToItem } from "../node_modules/firebase-3-react/src/index";

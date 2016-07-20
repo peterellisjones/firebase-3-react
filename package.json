@@ -1,12 +1,12 @@
 {
   "name": "firebase-3-react",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Simple library to bind Firebase data to React components. Also supports caching in local storage.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --outDir dist",
     "lint": "tslint src/**/*",
-    "test": "jest"
+    "test": "jest --config jest.json"
   },
   "repository": {
     "type": "git",
