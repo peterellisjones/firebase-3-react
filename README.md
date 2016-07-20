@@ -1,10 +1,10 @@
 # typescript-firebase-react
 
-Simple library to create React containers to which Firebase data to components. Also supports caching in local storage.
+Simple library to create React containers which bind Firebase data to components. Also supports caching in local storage. Uses the Firebase 3 client.
 
 ## Usage
 
-This library exposes three methods:
+This library can be used with either Javascript or Typescript. If using Javascript simply omit the type annotations in the code below.
 
 ### `init`
 
@@ -34,6 +34,27 @@ init({
 });
 ```
 
-### `bindToCollection<T>`
+### `bindToItem<T, P>`
 
-### `bindToItem<T>`
+`bindToItem` creates a one-way binding from an item at a firebase path. `T` is the type of the data returned from Firebase. `P` is the type of any other props given to the component.
+
+Example:
+
+```
+interface Props {
+  data: string;
+  isBold: boolean;
+}
+
+const username = (props: Props): JSX.Element {
+  if (props.isBold) {
+    return
+  }
+}
+
+
+
+```
+
+
+### `bindToCollection<T, P>`
