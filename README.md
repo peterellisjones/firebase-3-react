@@ -67,6 +67,7 @@ Import these to access the underlying Firebase 3 clients. See here for more deta
 Example:
 
 ```typescript
+/// <reference path="node_modules/firebase-3-react/firebase.d.ts" />
 import { auth } from "firebase-3-react"
 
 auth.onAuthStateChanged((user: firebase.User) => {
