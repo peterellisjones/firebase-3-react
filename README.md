@@ -238,6 +238,32 @@ auth.onAuthStateChanged((user: firebase.User) => {
 });
 ```
 
+## Caching
+
+Setting `cacheLocally=true` will allow components to render instantly if the user has loaded data they depend on before. For `bindToItem` the cache is keyed by the Firebase database reference path (eg: `comments/123456`). For `bindToCollection`, the cache is keyed by the database reference path **and** the query if there is one. This means that, for example:
+```typescript
+<BoundComments
+    firebaseRef={`comments`}
+    firebaseQuery={{
+      equalTo: { value: "123" },
+      orderByChild: "user_id",
+    }}
+  />;
+```
+and
+```typescript
+<BoundComments
+  firebaseRef={`comments`}
+  firebaseQuery={{
+    equalTo: { value: "ABC" },
+    orderByChild: "user_id",
+  }}
+/>;
+```
+will be cached at different keys.
+
+If `localStorage.setItem` fails (eg when the local storage quota has been exceed) it simply catches the error and writes it to the console. It does not re-raise the error.
+
 ## Webpack
 
 If you use webpack with the typescript loader, you'll need to include the path `node_modules/firebase-3-react` to the list of directories parsed by the loader. eg:
