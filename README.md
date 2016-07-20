@@ -24,7 +24,7 @@ init(options: FirebaseOptions);
 Example:
 
 ```typescript
-import { init } from "typescript-firebase-react"
+import { init } from "firebase-3-react"
 
 init({
   apiKey: "example-api-key",
@@ -58,3 +58,20 @@ const username = (props: Props): JSX.Element {
 
 
 ### `bindToCollection<T, P>`
+
+
+### `database, auth, storage`
+
+Import these to access the underlying Firebase 3 clients. See here for more details: [https://firebase.google.com/docs/web/setup#use_firebase_services](https://firebase.google.com/docs/web/setup#use_firebase_services).
+
+Example:
+
+```typescript
+import { auth } from "firebase-3-react"
+
+auth.onAuthStateChanged((user: firebase.User) => {
+  if (user && user.uid) {
+    console.log(`Now logged in as user ${user.uid}`);
+  }
+});
+```
