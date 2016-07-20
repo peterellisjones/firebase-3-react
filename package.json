@@ -1,7 +1,7 @@
 {
   "name": "firebase-3-react",
-  "version": "1.0.3",
-  "description": "Simple library to create React containers which bind Firebase data to components. Also supports caching in local storage.",
+  "version": "1.0.4",
+  "description": "Simple library to bind Firebase data to React components. Also supports caching in local storage.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --outDir dist",

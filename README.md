@@ -58,10 +58,10 @@ interface Props { //  Note that the component *MUST* require the prop `data: T;`
 
 class Comment extends React.Component<Props, {}> {
   public render(): JSX.Element {
-    if (this.verbose) {
+    if (this.props.verbose) {
       console.log("Rendering comment");
     }
-    if (this.fromAdmin) {
+    if (this.props.fromAdmin) {
       return <div className="admin-comment">{this.props.data}</div>;
     }
     return <div>{this.props.data}</div>;
@@ -74,10 +74,10 @@ class Comment extends React.Component<Props, {}> {
 ```javascript
 class Comment extends React.Component {
   public render() {
-    if (this.verbose) {
+    if (this.props.verbose) {
       console.log("Rendering comment");
     }
-    if (this.fromAdmin) {
+    if (this.props.fromAdmin) {
       return <div className="admin-comment">{this.props.data}</div>;
     }
     return <div>{this.props.data}</div>;
@@ -163,11 +163,11 @@ interface Props {
 
 class Comments extends React.Component<Props, {}> {
   public render(): JSX.Element {
-    if (this.verbose) {
+    if (this.props.verbose) {
       console.log("Rendering comments");
     }
-    if (this.fromAdmin) {
-      return <div className="admin-comments">{this.props.renderComments()}</div>;
+    if (this.props.fromAdmin) {
+      return <div className="admin-comments">{this.renderComments()}</div>;
     }
     return <div>{this.renderComments()}</div>;
   }
