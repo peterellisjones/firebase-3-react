@@ -103,7 +103,7 @@ function localStorageKey(firebaseRef: string): string {
 function saveToLocalStorage<T>(firebaseRef: string, data: T) {
   try {
     localStorage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
   }
 

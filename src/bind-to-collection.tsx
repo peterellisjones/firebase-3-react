@@ -125,7 +125,7 @@ function localStorageKey(firebaseRef: string, query: IFirebaseQuery): string {
 function saveToLocalStorage<T>(firebaseRef: string, query: IFirebaseQuery, data: T) {
   try {
     localStorage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
   }
 }
