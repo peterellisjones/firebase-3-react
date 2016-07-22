@@ -1,13 +1,12 @@
-"use strict";
-const React = require("react");
-const init_1 = require("./init");
-function bindToItem(innerKlass) {
+import * as React from "react";
+import { database } from "./init";
+export function bindToItem(innerKlass) {
     return class extends React.Component {
         constructor(props) {
             super(props);
             this.state = { status: 0 };
             const callback = this.updateData.bind(this);
-            const reference = init_1.database().ref(props.firebaseRef);
+            const reference = database().ref(props.firebaseRef);
             if (this.props.cacheLocally) {
                 const localStorageData = checkLocalStorage(props.firebaseRef);
                 if (localStorageData) {
@@ -54,12 +53,16 @@ function bindToItem(innerKlass) {
     }
     ;
 }
-exports.bindToItem = bindToItem;
 function localStorageKey(firebaseRef) {
     return `firebase-cache-item:${firebaseRef}`;
 }
 function saveToLocalStorage(firebaseRef, data) {
-    localStorage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
+    try {
+        localStorage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
+    }
+    catch (err) {
+        console.error(err.message);
+    }
 }
 function checkLocalStorage(firebaseRef) {
     const item = localStorage.getItem(localStorageKey(firebaseRef));

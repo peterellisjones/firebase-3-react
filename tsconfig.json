@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2015",
     "sourceMap": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "module": "commonjs",
+    "module": "es2015",
     "removeComments": true
   },
   "exclude": [

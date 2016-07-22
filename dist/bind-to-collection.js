@@ -1,13 +1,12 @@
-"use strict";
-const React = require("react");
-const init_1 = require("./init");
-function bindToCollection(innerKlass) {
+import * as React from "react";
+import { database } from "./init";
+export function bindToCollection(innerKlass) {
     return class extends React.Component {
         constructor(props) {
             super(props);
             this.state = { status: 0 };
             const callback = this.updateData.bind(this);
-            let reference = init_1.database().ref(props.firebaseRef);
+            let reference = database().ref(props.firebaseRef);
             if (props.firebaseQuery) {
                 reference = applyQuery(reference, props.firebaseQuery);
             }
@@ -60,12 +59,16 @@ function bindToCollection(innerKlass) {
     }
     ;
 }
-exports.bindToCollection = bindToCollection;
 function localStorageKey(firebaseRef, query) {
-    return `firebase-cache-collection:${firebaseRef}:${JSON.stringify(query)}`;
+    return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
 }
 function saveToLocalStorage(firebaseRef, query, data) {
-    localStorage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
+    try {
+        localStorage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
+    }
+    catch (err) {
+        console.error(err.message);
+    }
 }
 function checkLocalStorage(firebaseRef, query) {
     const item = localStorage.getItem(localStorageKey(firebaseRef, query));
