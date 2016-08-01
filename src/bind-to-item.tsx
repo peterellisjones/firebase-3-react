@@ -46,7 +46,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       const reference = database().ref(props.firebaseRef);
 
       if (this.props.cacheLocally) {
-        const localStorageData = checkLocalStorage<T>(props.firebaseRef);
+        const localStorageData = checkStorage<T>(props.firebaseRef, props.storage);
         if (localStorageData) {
           this.state.data = localStorageData;
           this.state.status = Status.LoadedFromLocalStorage;
@@ -95,7 +95,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       this.setState({ data: val, status: Status.LoadedFromFirebase });
 
       if (this.props.cacheLocally) {
-        saveToLocalStorage(this.props.firebaseRef, val);
+        saveToStorage(this.props.firebaseRef, val, this.props.storage);
       }
     }
   };
@@ -105,8 +105,8 @@ function localStorageKey(firebaseRef: string): string {
   return `firebase-cache-item:${firebaseRef}`;
 }
 
-function saveToLocalStorage<T>(firebaseRef: string, data: T) {
-  const storage = this.props.storage || localStorage;
+function saveToStorage<T>(firebaseRef: string, data: T, customStorage?: Storage) {
+  const storage = customStorage || window.localStorage;
   try {
     storage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
   } catch (err) {
@@ -115,8 +115,8 @@ function saveToLocalStorage<T>(firebaseRef: string, data: T) {
 
 }
 
-function checkLocalStorage<T>(firebaseRef: string): T {
-  const storage = this.props.storage || localStorage;
+function checkStorage<T>(firebaseRef: string, customStorage?: Storage): T {
+  const storage = customStorage || window.localStorage;
   const item = storage.getItem(localStorageKey(firebaseRef));
 
   if (item) {

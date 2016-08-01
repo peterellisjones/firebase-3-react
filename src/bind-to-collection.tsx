@@ -65,7 +65,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       }
 
       if (props.cacheLocally) {
-        const localStorageData = checkLocalStorage<{ [id: string]: T }>(props.firebaseRef, props.firebaseQuery);
+        const localStorageData = checkStorage<{ [id: string]: T }>(props.firebaseRef, props.firebaseQuery, props.storage);
         if (localStorageData) {
           this.state.data = localStorageData;
           this.state.status = Status.LoadedFromLocalStorage;
@@ -118,7 +118,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       this.setState({ data: val, status: Status.LoadedFromFirebase });
 
       if (this.props.cacheLocally) {
-        saveToLocalStorage<{ [id: string]: T }>(this.props.firebaseRef, this.props.firebaseQuery, val);
+        saveToStorage<{ [id: string]: T }>(this.props.firebaseRef, this.props.firebaseQuery, val, this.props.storage);
       }
     }
   };
@@ -128,8 +128,8 @@ function localStorageKey(firebaseRef: string, query: IFirebaseQuery): string {
   return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
 }
 
-function saveToLocalStorage<T>(firebaseRef: string, query: IFirebaseQuery, data: T) {
-  const storage = this.props.storage || localStorage;
+function saveToStorage<T>(firebaseRef: string, query: IFirebaseQuery, data: T, storageObject?: Storage) {
+  const storage = storageObject || window.localStorage;
 
   try {
     storage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
@@ -138,8 +138,8 @@ function saveToLocalStorage<T>(firebaseRef: string, query: IFirebaseQuery, data:
   }
 }
 
-function checkLocalStorage<T>(firebaseRef: string, query: IFirebaseQuery): T {
-  const storage = this.props.storage || localStorage;
+function checkStorage<T>(firebaseRef: string, query: IFirebaseQuery, storageObject?: Storage): T {
+  const storage = storageObject || window.localStorage;
   const item = storage.getItem(localStorageKey(firebaseRef, query));
 
   if (item) {

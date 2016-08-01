@@ -8,7 +8,7 @@ export function bindToItem(innerKlass) {
             const callback = this.updateData.bind(this);
             const reference = database().ref(props.firebaseRef);
             if (this.props.cacheLocally) {
-                const localStorageData = checkLocalStorage(props.firebaseRef);
+                const localStorageData = checkStorage(props.firebaseRef, props.storage);
                 if (localStorageData) {
                     this.state.data = localStorageData;
                     this.state.status = 1;
@@ -47,7 +47,7 @@ export function bindToItem(innerKlass) {
             const val = snapshot.val();
             this.setState({ data: val, status: 2 });
             if (this.props.cacheLocally) {
-                saveToLocalStorage(this.props.firebaseRef, val);
+                saveToStorage(this.props.firebaseRef, val, this.props.storage);
             }
         }
     }
@@ -56,8 +56,8 @@ export function bindToItem(innerKlass) {
 function localStorageKey(firebaseRef) {
     return `firebase-cache-item:${firebaseRef}`;
 }
-function saveToLocalStorage(firebaseRef, data) {
-    const storage = this.props.storage || localStorage;
+function saveToStorage(firebaseRef, data, customStorage) {
+    const storage = customStorage || window.localStorage;
     try {
         storage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
     }
@@ -65,8 +65,8 @@ function saveToLocalStorage(firebaseRef, data) {
         console.error(err.message);
     }
 }
-function checkLocalStorage(firebaseRef) {
-    const storage = this.props.storage || localStorage;
+function checkStorage(firebaseRef, customStorage) {
+    const storage = customStorage || window.localStorage;
     const item = storage.getItem(localStorageKey(firebaseRef));
     if (item) {
         return JSON.parse(item);

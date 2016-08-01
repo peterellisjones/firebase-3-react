@@ -11,7 +11,7 @@ export function bindToCollection(innerKlass) {
                 reference = applyQuery(reference, props.firebaseQuery);
             }
             if (props.cacheLocally) {
-                const localStorageData = checkLocalStorage(props.firebaseRef, props.firebaseQuery);
+                const localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
                 if (localStorageData) {
                     this.state.data = localStorageData;
                     this.state.status = 1;
@@ -53,7 +53,7 @@ export function bindToCollection(innerKlass) {
             }
             this.setState({ data: val, status: 2 });
             if (this.props.cacheLocally) {
-                saveToLocalStorage(this.props.firebaseRef, this.props.firebaseQuery, val);
+                saveToStorage(this.props.firebaseRef, this.props.firebaseQuery, val, this.props.storage);
             }
         }
     }
@@ -62,8 +62,8 @@ export function bindToCollection(innerKlass) {
 function localStorageKey(firebaseRef, query) {
     return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
 }
-function saveToLocalStorage(firebaseRef, query, data) {
-    const storage = this.props.storage || localStorage;
+function saveToStorage(firebaseRef, query, data, storageObject) {
+    const storage = storageObject || window.localStorage;
     try {
         storage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
     }
@@ -71,8 +71,8 @@ function saveToLocalStorage(firebaseRef, query, data) {
         console.error(err.message);
     }
 }
-function checkLocalStorage(firebaseRef, query) {
-    const storage = this.props.storage || localStorage;
+function checkStorage(firebaseRef, query, storageObject) {
+    const storage = storageObject || window.localStorage;
     const item = storage.getItem(localStorageKey(firebaseRef, query));
     if (item) {
         return JSON.parse(item);
