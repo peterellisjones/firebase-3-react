@@ -37,7 +37,7 @@ export function bindToItem(innerKlass) {
         innerProps() {
             const innerProps = { data: this.state.data };
             for (const id of Object.keys(this.props)) {
-                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery") {
+                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
                     innerProps[id] = this.props[id];
                 }
             }
@@ -57,15 +57,17 @@ function localStorageKey(firebaseRef) {
     return `firebase-cache-item:${firebaseRef}`;
 }
 function saveToLocalStorage(firebaseRef, data) {
+    const storage = this.props.storage || localStorage;
     try {
-        localStorage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
+        storage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
     }
     catch (err) {
         console.error(err.message);
     }
 }
 function checkLocalStorage(firebaseRef) {
-    const item = localStorage.getItem(localStorageKey(firebaseRef));
+    const storage = this.props.storage || localStorage;
+    const item = storage.getItem(localStorageKey(firebaseRef));
     if (item) {
         return JSON.parse(item);
     }
