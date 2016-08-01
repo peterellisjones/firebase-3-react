@@ -82,7 +82,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
     private innerProps(): InnerProps<T, P> {
       const innerProps = { data: this.state.data } as InnerProps<T, P> ;
       for (const id of Object.keys(this.props)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery") {
+        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
           innerProps[id] = this.props[id];
         }
       }
