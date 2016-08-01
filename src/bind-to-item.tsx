@@ -24,9 +24,14 @@ type InnerProps<T, P> = { data: T} & P;
 type OuterProps<P> = {
   firebaseRef: string;
   cacheLocally?: boolean;
+  storage?: Storage;
   loader?: (props: P) => JSX.Element;
 } & P;
 
+interface Storage {
+  getItem(key: string): string;
+  setItem(key: string, value: string);
+}
 
 export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>): React.ComponentClass<OuterProps<P>> {
   return class extends React.Component<OuterProps<P>, IState<T>> {
@@ -101,8 +106,9 @@ function localStorageKey(firebaseRef: string): string {
 }
 
 function saveToLocalStorage<T>(firebaseRef: string, data: T) {
+  const storage = this.props.storage || localStorage;
   try {
-    localStorage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
+    storage.setItem(localStorageKey(firebaseRef), JSON.stringify(data));
   } catch (err) {
     console.error(err.message);
   }
@@ -110,7 +116,8 @@ function saveToLocalStorage<T>(firebaseRef: string, data: T) {
 }
 
 function checkLocalStorage<T>(firebaseRef: string): T {
-  const item = localStorage.getItem(localStorageKey(firebaseRef));
+  const storage = this.props.storage || localStorage;
+  const item = storage.getItem(localStorageKey(firebaseRef));
 
   if (item) {
     return JSON.parse(item);
