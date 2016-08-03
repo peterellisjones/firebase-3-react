@@ -1,26 +1,11 @@
 import * as React from "react";
 import { database } from "./init";
+import { isEqual } from "lodash";
 export function bindToCollection(innerKlass) {
     return class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = { status: 0 };
-            const callback = this.updateData.bind(this);
-            let reference = database().ref(props.firebaseRef);
-            if (props.firebaseQuery) {
-                reference = applyQuery(reference, props.firebaseQuery);
-            }
-            if (props.cacheLocally) {
-                const localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
-                if (localStorageData) {
-                    this.state.data = localStorageData;
-                    this.state.status = 1;
-                }
-            }
-            reference.on("value", callback);
-            this.unbind = () => {
-                reference.off("value", callback);
-            };
+            this.reset(props, false);
         }
         render() {
             const innerProps = this.innerProps();
@@ -35,6 +20,52 @@ export function bindToCollection(innerKlass) {
         componentWillUnmount() {
             if (this.unbind) {
                 this.unbind();
+            }
+        }
+        shouldComponentUpdate(nextProps, nextState) {
+            if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+                return true;
+            }
+            if (!isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+                return true;
+            }
+            if (this.state.status === 0 && nextState.status !== 0) {
+                return true;
+            }
+            return isEqual(this.state.data, nextState.data);
+        }
+        componentWillRecieveProps(nextProps) {
+            if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+                this.reset(nextProps, true);
+            }
+        }
+        reset(props, useSetState) {
+            const state = { status: 0 };
+            if (props.cacheLocally) {
+                const localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
+                if (localStorageData) {
+                    state.data = localStorageData;
+                    state.status = 1;
+                }
+            }
+            if (this.unbind) {
+                this.unbind();
+                this.unbind = undefined;
+            }
+            const callback = this.updateData.bind(this);
+            let reference = database().ref(props.firebaseRef);
+            if (props.firebaseQuery) {
+                reference = applyQuery(reference, props.firebaseQuery);
+            }
+            reference.on("value", callback);
+            this.unbind = () => {
+                reference.off("value", callback);
+            };
+            if (useSetState) {
+                this.setState(state);
+            }
+            else {
+                this.state = state;
             }
         }
         innerProps() {

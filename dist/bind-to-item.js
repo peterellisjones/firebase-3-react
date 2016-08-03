@@ -1,23 +1,25 @@
 import * as React from "react";
 import { database } from "./init";
+import { isEqual } from "lodash";
 export function bindToItem(innerKlass) {
     return class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = { status: 0 };
-            const callback = this.updateData.bind(this);
-            const reference = database().ref(props.firebaseRef);
-            if (this.props.cacheLocally) {
-                const localStorageData = checkStorage(props.firebaseRef, props.storage);
-                if (localStorageData) {
-                    this.state.data = localStorageData;
-                    this.state.status = 1;
-                }
+            this.reset(props, false);
+        }
+        componentWillRecieveProps(nextProps) {
+            if (this.props.firebaseRef !== nextProps.firebaseRef) {
+                this.reset(nextProps, true);
             }
-            reference.on("value", callback);
-            this.unbind = () => {
-                reference.off("value", callback);
-            };
+        }
+        shouldComponentUpdate(nextProps, nextState) {
+            if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+                return true;
+            }
+            if (this.state.status === 0 && nextState.status !== 0) {
+                return true;
+            }
+            return isEqual(this.state.data, nextState.data);
         }
         render() {
             const innerProps = this.innerProps();
@@ -32,6 +34,32 @@ export function bindToItem(innerKlass) {
         componentWillUnmount() {
             if (this.unbind) {
                 this.unbind();
+            }
+        }
+        reset(props, useSetState) {
+            const state = { status: 0 };
+            if (this.props.cacheLocally) {
+                const localStorageData = checkStorage(props.firebaseRef, props.storage);
+                if (localStorageData) {
+                    state.data = localStorageData;
+                    state.status = 1;
+                }
+            }
+            if (this.unbind) {
+                this.unbind();
+                this.unbind = undefined;
+            }
+            const callback = this.updateData.bind(this);
+            const reference = database().ref(props.firebaseRef);
+            reference.on("value", callback);
+            this.unbind = () => {
+                reference.off("value", callback);
+            };
+            if (useSetState) {
+                this.setState(state);
+            }
+            else {
+                this.state = state;
             }
         }
         innerProps() {
