@@ -1,8 +1,8 @@
 import * as React from "react";
 import { database } from "./init";
-import { isEqual } from "lodash";
+import { isEqual, difference } from "lodash";
 export function bindToItem(innerKlass) {
-    return class extends React.Component {
+    class BindToItem extends React.Component {
         constructor(props) {
             super(props);
             this.reset(props, false);
@@ -19,7 +19,7 @@ export function bindToItem(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
+            if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
                 return true;
             }
             return !isEqual(this.state.data, nextState.data);
@@ -65,13 +65,16 @@ export function bindToItem(innerKlass) {
                 this.state = state;
             }
         }
-        buildInnerProps(props) {
-            const innerProps = { data: this.state.data };
-            for (const id of Object.keys(props)) {
-                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
-                    innerProps[id] = props[id];
-                }
+        buildOtherProps(outerProps) {
+            const otherProps = {};
+            for (const id of difference(Object.keys(outerProps), BindToItem.propKeys)) {
+                otherProps[id] = outerProps[id];
             }
+            return otherProps;
+        }
+        buildInnerProps(outerProps) {
+            const innerProps = this.buildOtherProps(outerProps);
+            innerProps.data = this.state.data;
             return innerProps;
         }
         updateData(snapshot) {
@@ -82,7 +85,9 @@ export function bindToItem(innerKlass) {
             }
         }
     }
+    BindToItem.propKeys = ["firebaseRef", "cacheLocally", "storage", "loader"];
     ;
+    return BindToItem;
 }
 function localStorageKey(firebaseRef) {
     return `firebase-cache-item:${firebaseRef}`;

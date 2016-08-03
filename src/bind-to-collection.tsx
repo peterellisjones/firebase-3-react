@@ -1,6 +1,6 @@
 import * as React from "react";
 import { database } from "./init";
-import { isEqual } from "lodash";
+import { isEqual, difference } from "lodash";
 
 /// <reference path="../react.d.ts" />
 
@@ -51,7 +51,8 @@ interface Storage {
 }
 
 export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerProps<T, P>>): React.ComponentClass<OuterProps<P>> {
-  return class extends React.Component<OuterProps<P>, IState<T>> {
+  class BindToCollection extends React.Component<OuterProps<P>, IState<T>> {
+    private static propKeys = ["firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
     private unbind: () => void;
 
     constructor(props: OuterProps<P>) {
@@ -94,8 +95,8 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
         return true;
       }
 
-      // Yes if innerProps have changed
-      if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
+      // Yes if otherProps have changed
+      if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
         return true;
       }
 
@@ -146,13 +147,19 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       }
     }
 
-    private buildInnerProps(outerProps: OuterProps<P>): InnerProps<T, P> {
-      const innerProps = { data: this.state.data } as InnerProps<T, P> ;
-      for (const id of Object.keys(outerProps)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
-          innerProps[id] = this.props[id];
-        }
+    private buildOtherProps(outerProps: OuterProps<P>): P {
+      const otherProps = {} as P;
+
+      for (const id of difference(Object.keys(outerProps), BindToCollection.propKeys)) {
+        otherProps[id] = outerProps[id];
       }
+
+      return otherProps;
+    }
+
+    private buildInnerProps(outerProps: OuterProps<P>): InnerProps<T, P> {
+      const innerProps = this.buildOtherProps(outerProps) as InnerProps<T, P> ;
+      innerProps.data = this.state.data;
 
       return innerProps;
     }
@@ -171,6 +178,8 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       }
     }
   };
+
+  return BindToCollection;
 }
 
 function localStorageKey(firebaseRef: string, query: IFirebaseQuery): string {

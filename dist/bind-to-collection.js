@@ -1,8 +1,8 @@
 import * as React from "react";
 import { database } from "./init";
-import { isEqual } from "lodash";
+import { isEqual, difference } from "lodash";
 export function bindToCollection(innerKlass) {
-    return class extends React.Component {
+    class BindToCollection extends React.Component {
         constructor(props) {
             super(props);
             this.reset(props, false);
@@ -32,7 +32,7 @@ export function bindToCollection(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
+            if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
                 return true;
             }
             return !isEqual(this.state.data, nextState.data);
@@ -71,13 +71,16 @@ export function bindToCollection(innerKlass) {
                 this.state = state;
             }
         }
-        buildInnerProps(outerProps) {
-            const innerProps = { data: this.state.data };
-            for (const id of Object.keys(outerProps)) {
-                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
-                    innerProps[id] = this.props[id];
-                }
+        buildOtherProps(outerProps) {
+            const otherProps = {};
+            for (const id of difference(Object.keys(outerProps), BindToCollection.propKeys)) {
+                otherProps[id] = outerProps[id];
             }
+            return otherProps;
+        }
+        buildInnerProps(outerProps) {
+            const innerProps = this.buildOtherProps(outerProps);
+            innerProps.data = this.state.data;
             return innerProps;
         }
         updateData(snapshot) {
@@ -91,7 +94,9 @@ export function bindToCollection(innerKlass) {
             }
         }
     }
+    BindToCollection.propKeys = ["firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
     ;
+    return BindToCollection;
 }
 function localStorageKey(firebaseRef, query) {
     return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
