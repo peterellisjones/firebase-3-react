@@ -1,5 +1,6 @@
 import * as React from "react";
 import { database } from "./init";
+import { isEqual } from "lodash";
 
 /// <reference path="../react.d.ts" />
 
@@ -56,27 +57,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
     constructor(props: OuterProps<P>) {
       super(props);
 
-      this.state = { status: Status.Pending };
-
-      const callback = this.updateData.bind(this);
-      let reference: firebase.database.Query = database().ref(props.firebaseRef);
-      if (props.firebaseQuery) {
-        reference = applyQuery(reference, props.firebaseQuery);
-      }
-
-      if (props.cacheLocally) {
-        const localStorageData = checkStorage<{ [id: string]: T }>(props.firebaseRef, props.firebaseQuery, props.storage);
-        if (localStorageData) {
-          this.state.data = localStorageData;
-          this.state.status = Status.LoadedFromLocalStorage;
-        }
-      }
-
-      reference.on("value", callback);
-
-      this.unbind = () => {
-        reference.off("value", callback);
-      };
+      this.reset(props, false);
     }
 
     public render(): JSX.Element {
@@ -94,6 +75,69 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
     public componentWillUnmount() {
       if (this.unbind) {
         this.unbind();
+      }
+    }
+
+    public shouldComponentUpdate(nextProps: OuterProps<P>, nextState: IState<T>): boolean {
+      // Yes if reference has changed
+      if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+        return true;
+      }
+
+      // Yes if query has changed
+      if (!isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+        return true;
+      }
+
+      // Yes if finished loading
+      if (this.state.status === Status.Pending && nextState.status !== Status.Pending) {
+        return true;
+      }
+
+      // Otherwise do deep comparison of data
+      return isEqual(this.state.data, nextState.data);
+    }
+
+    public componentWillRecieveProps(nextProps: OuterProps<P>) {
+      // reset if reference or query change
+      if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+        this.reset(nextProps, true);
+      }
+    }
+
+    private reset(props: OuterProps<P>, useSetState?: boolean) {
+      const state: IState<T> = { status: Status.Pending };
+
+
+      if (props.cacheLocally) {
+        const localStorageData = checkStorage<{ [id: string]: T }>(props.firebaseRef, props.firebaseQuery, props.storage);
+        if (localStorageData) {
+          state.data = localStorageData;
+          state.status = Status.LoadedFromLocalStorage;
+        }
+      }
+
+      if (this.unbind) {
+        this.unbind();
+        this.unbind = undefined;
+      }
+
+      const callback = this.updateData.bind(this);
+
+      let reference: firebase.database.Query = database().ref(props.firebaseRef);
+      if (props.firebaseQuery) {
+        reference = applyQuery(reference, props.firebaseQuery);
+      }
+      reference.on("value", callback);
+
+      this.unbind = () => {
+        reference.off("value", callback);
+      };
+
+      if (useSetState) {
+        this.setState(state);
+      } else {
+        this.state = state;
       }
     }
 
