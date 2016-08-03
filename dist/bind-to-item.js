@@ -19,7 +19,7 @@ export function bindToItem(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            return isEqual(this.state.data, nextState.data);
+            return !isEqual(this.state.data, nextState.data);
         }
         render() {
             const innerProps = this.innerProps();

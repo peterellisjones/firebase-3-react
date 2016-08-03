@@ -63,7 +63,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       }
 
       // Otherwise do deep comparison of data
-      return isEqual(this.state.data, nextState.data);
+      return !isEqual(this.state.data, nextState.data);
     }
 
     public render(): JSX.Element {

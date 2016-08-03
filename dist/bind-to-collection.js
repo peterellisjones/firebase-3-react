@@ -32,7 +32,7 @@ export function bindToCollection(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            return isEqual(this.state.data, nextState.data);
+            return !isEqual(this.state.data, nextState.data);
         }
         componentWillReceiveProps(nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {

@@ -95,7 +95,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       }
 
       // Otherwise do deep comparison of data
-      return isEqual(this.state.data, nextState.data);
+      return !isEqual(this.state.data, nextState.data);
     }
 
     public componentWillReceiveProps(nextProps: OuterProps<P>) {
