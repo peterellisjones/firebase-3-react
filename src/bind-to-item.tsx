@@ -62,12 +62,17 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
         return true;
       }
 
+      // Yes if innerProps have changed
+      if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
+        return true;
+      }
+
       // Otherwise do deep comparison of data
       return !isEqual(this.state.data, nextState.data);
     }
 
     public render(): JSX.Element {
-      const innerProps = this.innerProps();
+      const innerProps = this.buildInnerProps(this.props);
 
       if (this.state.status === Status.Pending) {
         if (this.props.loader) {
@@ -116,11 +121,11 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       }
     }
 
-    private innerProps(): InnerProps<T, P> {
+    private buildInnerProps(props: OuterProps<P>): InnerProps<T, P> {
       const innerProps = { data: this.state.data } as InnerProps<T, P> ;
-      for (const id of Object.keys(this.props)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
-          innerProps[id] = this.props[id];
+      for (const id of Object.keys(props)) {
+        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
+          innerProps[id] = props[id];
         }
       }
 

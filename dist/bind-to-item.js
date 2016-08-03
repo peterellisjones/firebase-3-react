@@ -19,10 +19,13 @@ export function bindToItem(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
+            if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
+                return true;
+            }
             return !isEqual(this.state.data, nextState.data);
         }
         render() {
-            const innerProps = this.innerProps();
+            const innerProps = this.buildInnerProps(this.props);
             if (this.state.status === 0) {
                 if (this.props.loader) {
                     return this.props.loader(innerProps);
@@ -62,11 +65,11 @@ export function bindToItem(innerKlass) {
                 this.state = state;
             }
         }
-        innerProps() {
+        buildInnerProps(props) {
             const innerProps = { data: this.state.data };
-            for (const id of Object.keys(this.props)) {
-                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
-                    innerProps[id] = this.props[id];
+            for (const id of Object.keys(props)) {
+                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
+                    innerProps[id] = props[id];
                 }
             }
             return innerProps;

@@ -61,7 +61,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
     }
 
     public render(): JSX.Element {
-      const innerProps = this.innerProps();
+      const innerProps = this.buildInnerProps(this.props);
       if (this.state.status === Status.Pending) {
         if (this.props.loader) {
           return this.props.loader(innerProps);
@@ -91,6 +91,11 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
 
       // Yes if finished loading
       if (this.state.status === Status.Pending && nextState.status !== Status.Pending) {
+        return true;
+      }
+
+      // Yes if innerProps have changed
+      if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
         return true;
       }
 
@@ -141,10 +146,10 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       }
     }
 
-    private innerProps(): InnerProps<T, P> {
+    private buildInnerProps(outerProps: OuterProps<P>): InnerProps<T, P> {
       const innerProps = { data: this.state.data } as InnerProps<T, P> ;
-      for (const id of Object.keys(this.props)) {
-        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
+      for (const id of Object.keys(outerProps)) {
+        if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
           innerProps[id] = this.props[id];
         }
       }

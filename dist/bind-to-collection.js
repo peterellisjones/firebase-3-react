@@ -8,7 +8,7 @@ export function bindToCollection(innerKlass) {
             this.reset(props, false);
         }
         render() {
-            const innerProps = this.innerProps();
+            const innerProps = this.buildInnerProps(this.props);
             if (this.state.status === 0) {
                 if (this.props.loader) {
                     return this.props.loader(innerProps);
@@ -30,6 +30,9 @@ export function bindToCollection(innerKlass) {
                 return true;
             }
             if (this.state.status === 0 && nextState.status !== 0) {
+                return true;
+            }
+            if (!isEqual(this.buildInnerProps(this.props), this.buildInnerProps(nextProps))) {
                 return true;
             }
             return !isEqual(this.state.data, nextState.data);
@@ -68,10 +71,10 @@ export function bindToCollection(innerKlass) {
                 this.state = state;
             }
         }
-        innerProps() {
+        buildInnerProps(outerProps) {
             const innerProps = { data: this.state.data };
-            for (const id of Object.keys(this.props)) {
-                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage") {
+            for (const id of Object.keys(outerProps)) {
+                if (id !== "firebaseRef" && id !== "cacheLocally" && id !== "firebaseQuery" && id !== "storage" && id !== "loader") {
                     innerProps[id] = this.props[id];
                 }
             }
