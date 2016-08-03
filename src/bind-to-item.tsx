@@ -44,7 +44,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       this.reset(props, false);
     }
 
-    public componentWillRecieveProps(nextProps: OuterProps<P>) {
+    public componentWillReceiveProps(nextProps: OuterProps<P>) {
       // reset if reference changes
       if (this.props.firebaseRef !== nextProps.firebaseRef) {
         this.reset(nextProps, true);

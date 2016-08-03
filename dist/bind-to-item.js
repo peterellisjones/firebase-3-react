@@ -7,7 +7,7 @@ export function bindToItem(innerKlass) {
             super(props);
             this.reset(props, false);
         }
-        componentWillRecieveProps(nextProps) {
+        componentWillReceiveProps(nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef) {
                 this.reset(nextProps, true);
             }

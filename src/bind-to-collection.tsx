@@ -98,7 +98,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
       return isEqual(this.state.data, nextState.data);
     }
 
-    public componentWillRecieveProps(nextProps: OuterProps<P>) {
+    public componentWillReceiveProps(nextProps: OuterProps<P>) {
       // reset if reference or query change
       if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
         this.reset(nextProps, true);

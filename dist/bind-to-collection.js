@@ -34,7 +34,7 @@ export function bindToCollection(innerKlass) {
             }
             return isEqual(this.state.data, nextState.data);
         }
-        componentWillRecieveProps(nextProps) {
+        componentWillReceiveProps(nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
                 this.reset(nextProps, true);
             }
