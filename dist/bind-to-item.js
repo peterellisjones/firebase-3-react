@@ -1,7 +1,8 @@
-import * as React from "react";
-import { database } from "./init";
-import { isEqual, difference } from "lodash";
-export function bindToItem(innerKlass) {
+"use strict";
+const React = require("react");
+const init_1 = require("./init");
+const lodash_1 = require("lodash");
+function bindToItem(innerKlass) {
     class BindToItem extends React.Component {
         constructor(props) {
             super(props);
@@ -19,10 +20,10 @@ export function bindToItem(innerKlass) {
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
+            if (!lodash_1.isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
                 return true;
             }
-            return !isEqual(this.state.data, nextState.data);
+            return !lodash_1.isEqual(this.state.data, nextState.data);
         }
         render() {
             const innerProps = this.buildInnerProps(this.props);
@@ -53,7 +54,7 @@ export function bindToItem(innerKlass) {
                 this.unbind = undefined;
             }
             const callback = this.updateData.bind(this);
-            const reference = database().ref(props.firebaseRef);
+            const reference = init_1.database().ref(props.firebaseRef);
             reference.on("value", callback);
             this.unbind = () => {
                 reference.off("value", callback);
@@ -67,7 +68,7 @@ export function bindToItem(innerKlass) {
         }
         buildOtherProps(outerProps) {
             const otherProps = {};
-            for (const id of difference(Object.keys(outerProps), BindToItem.propKeys)) {
+            for (const id of lodash_1.difference(Object.keys(outerProps), BindToItem.propKeys)) {
                 otherProps[id] = outerProps[id];
             }
             return otherProps;
@@ -89,6 +90,7 @@ export function bindToItem(innerKlass) {
     ;
     return BindToItem;
 }
+exports.bindToItem = bindToItem;
 function localStorageKey(firebaseRef) {
     return `firebase-cache-item:${firebaseRef}`;
 }

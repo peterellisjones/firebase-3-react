@@ -4,7 +4,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "module": "es2015",
+    "module": "commonjs",
     "removeComments": true
   },
   "exclude": [

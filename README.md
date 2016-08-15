@@ -18,9 +18,14 @@ This library was written in Typescript but can be used with either Javascript or
 import { init } from "../node_modules/firebase-3-react/src/index";
 ```
 
-If using ES6 Javascript you can import the regular way ie:
+If using regular Javascript you can import the regular way ie:
 ```javascript
-import { init } from "firebase-3-react";
+var init = require("firebase-3-react").init;
+```
+
+Or using es6 modules:
+```javascript
+import { init } = require("firebase-3-react");
 ```
 
 ## `init`

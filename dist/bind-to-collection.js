@@ -1,7 +1,8 @@
-import * as React from "react";
-import { database } from "./init";
-import { isEqual, difference } from "lodash";
-export function bindToCollection(innerKlass) {
+"use strict";
+const React = require("react");
+const init_1 = require("./init");
+const lodash_1 = require("lodash");
+function bindToCollection(innerKlass) {
     class BindToCollection extends React.Component {
         constructor(props) {
             super(props);
@@ -26,19 +27,19 @@ export function bindToCollection(innerKlass) {
             if (nextProps.firebaseRef !== nextProps.firebaseRef) {
                 return true;
             }
-            if (!isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+            if (!lodash_1.isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
                 return true;
             }
             if (this.state.status === 0 && nextState.status !== 0) {
                 return true;
             }
-            if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
+            if (!lodash_1.isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
                 return true;
             }
-            return !isEqual(this.state.data, nextState.data);
+            return !lodash_1.isEqual(this.state.data, nextState.data);
         }
         componentWillReceiveProps(nextProps) {
-            if (this.props.firebaseRef !== nextProps.firebaseRef || !isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+            if (this.props.firebaseRef !== nextProps.firebaseRef || !lodash_1.isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
                 this.reset(nextProps, true);
             }
         }
@@ -56,7 +57,7 @@ export function bindToCollection(innerKlass) {
                 this.unbind = undefined;
             }
             const callback = this.updateData.bind(this);
-            let reference = database().ref(props.firebaseRef);
+            let reference = init_1.database().ref(props.firebaseRef);
             if (props.firebaseQuery) {
                 reference = applyQuery(reference, props.firebaseQuery);
             }
@@ -73,7 +74,7 @@ export function bindToCollection(innerKlass) {
         }
         buildOtherProps(outerProps) {
             const otherProps = {};
-            for (const id of difference(Object.keys(outerProps), BindToCollection.propKeys)) {
+            for (const id of lodash_1.difference(Object.keys(outerProps), BindToCollection.propKeys)) {
                 otherProps[id] = outerProps[id];
             }
             return otherProps;
@@ -98,6 +99,7 @@ export function bindToCollection(innerKlass) {
     ;
     return BindToCollection;
 }
+exports.bindToCollection = bindToCollection;
 function localStorageKey(firebaseRef, query) {
     return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
 }
