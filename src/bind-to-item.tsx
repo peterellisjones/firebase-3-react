@@ -63,7 +63,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
         return true;
       }
 
-      // Yes if buildOtherProps have changed
+      // Yes if user-supplier props have changed
       if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
         return true;
       }

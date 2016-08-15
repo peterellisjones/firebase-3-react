@@ -95,7 +95,7 @@ export function bindToCollection<T, P>(innerKlass: React.ComponentClass<InnerPro
         return true;
       }
 
-      // Yes if otherProps have changed
+      // Yes if user-supplier props have changed
       if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
         return true;
       }
