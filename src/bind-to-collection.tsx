@@ -242,15 +242,15 @@ function applyQuery(ref: firebase.database.Query, query: IFirebaseQuery): fireba
     ref = ref.endAt(query.endAt.value, query.endAt.key);
   }
 
-  if (query.orderByValue !== undefined) {
+  if (query.orderByValue) {
     ref = ref.orderByValue();
   }
 
-  if (query.orderByPriority !== undefined) {
+  if (query.orderByPriority) {
     ref = ref.orderByPriority();
   }
 
-  if (query.orderByKey !== undefined) {
+  if (query.orderByKey) {
     ref = ref.orderByKey();
   }
 
