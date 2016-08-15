@@ -1,10 +1,10 @@
 "use strict";
-const Firebase = require("firebase");
-let _database;
-let _auth;
-let _storage;
+var Firebase = require("firebase");
+var _database;
+var _auth;
+var _storage;
 function init(options) {
-    const fb = Firebase.initializeApp(options);
+    var fb = Firebase.initializeApp(options);
     _database = fb.database();
     _auth = fb.auth();
     _storage = fb.storage();

@@ -1,15 +1,21 @@
 "use strict";
-const React = require("react");
-const init_1 = require("./init");
-const lodash_1 = require("lodash");
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var React = require("react");
+var init_1 = require("./init");
+var lodash_1 = require("lodash");
 function bindToCollection(innerKlass) {
-    class BindToCollection extends React.Component {
-        constructor(props) {
-            super(props);
+    var BindToCollection = (function (_super) {
+        __extends(BindToCollection, _super);
+        function BindToCollection(props) {
+            _super.call(this, props);
             this.reset(props, false);
         }
-        render() {
-            const innerProps = this.buildInnerProps(this.props);
+        BindToCollection.prototype.render = function () {
+            var innerProps = this.buildInnerProps(this.props);
             if (this.state.status === 0) {
                 if (this.props.loader) {
                     return this.props.loader(innerProps);
@@ -17,13 +23,13 @@ function bindToCollection(innerKlass) {
                 return null;
             }
             return React.createElement(innerKlass, innerProps);
-        }
-        componentWillUnmount() {
+        };
+        BindToCollection.prototype.componentWillUnmount = function () {
             if (this.unbind) {
                 this.unbind();
             }
-        }
-        shouldComponentUpdate(nextProps, nextState) {
+        };
+        BindToCollection.prototype.shouldComponentUpdate = function (nextProps, nextState) {
             if (nextProps.firebaseRef !== nextProps.firebaseRef) {
                 return true;
             }
@@ -37,16 +43,16 @@ function bindToCollection(innerKlass) {
                 return true;
             }
             return !lodash_1.isEqual(this.state.data, nextState.data);
-        }
-        componentWillReceiveProps(nextProps) {
+        };
+        BindToCollection.prototype.componentWillReceiveProps = function (nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef || !lodash_1.isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
                 this.reset(nextProps, true);
             }
-        }
-        reset(props, useSetState) {
-            const state = { status: 0 };
+        };
+        BindToCollection.prototype.reset = function (props, useSetState) {
+            var state = { status: 0 };
             if (props.cacheLocally) {
-                const localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
+                var localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
                 if (localStorageData) {
                     state.data = localStorageData;
                     state.status = 1;
@@ -56,13 +62,13 @@ function bindToCollection(innerKlass) {
                 this.unbind();
                 this.unbind = undefined;
             }
-            const callback = this.updateData.bind(this);
-            let reference = init_1.database().ref(props.firebaseRef);
+            var callback = this.updateData.bind(this);
+            var reference = init_1.database().ref(props.firebaseRef);
             if (props.firebaseQuery) {
                 reference = applyQuery(reference, props.firebaseQuery);
             }
             reference.on("value", callback);
-            this.unbind = () => {
+            this.unbind = function () {
                 reference.off("value", callback);
             };
             if (useSetState) {
@@ -71,21 +77,22 @@ function bindToCollection(innerKlass) {
             else {
                 this.state = state;
             }
-        }
-        buildOtherProps(outerProps) {
-            const otherProps = {};
-            for (const id of lodash_1.difference(Object.keys(outerProps), BindToCollection.propKeys)) {
+        };
+        BindToCollection.prototype.buildOtherProps = function (outerProps) {
+            var otherProps = {};
+            for (var _i = 0, _a = lodash_1.difference(Object.keys(outerProps), BindToCollection.propKeys); _i < _a.length; _i++) {
+                var id = _a[_i];
                 otherProps[id] = outerProps[id];
             }
             return otherProps;
-        }
-        buildInnerProps(outerProps) {
-            const innerProps = this.buildOtherProps(outerProps);
+        };
+        BindToCollection.prototype.buildInnerProps = function (outerProps) {
+            var innerProps = this.buildOtherProps(outerProps);
             innerProps.data = this.state.data;
             return innerProps;
-        }
-        updateData(snapshot) {
-            let val = snapshot.val();
+        };
+        BindToCollection.prototype.updateData = function (snapshot) {
+            var val = snapshot.val();
             if (!val || Object.keys(val).length === 0) {
                 val = {};
             }
@@ -93,18 +100,19 @@ function bindToCollection(innerKlass) {
             if (this.props.cacheLocally) {
                 saveToStorage(this.props.firebaseRef, this.props.firebaseQuery, val, this.props.storage);
             }
-        }
-    }
-    BindToCollection.propKeys = ["firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
+        };
+        BindToCollection.propKeys = ["firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
+        return BindToCollection;
+    }(React.Component));
     ;
     return BindToCollection;
 }
 exports.bindToCollection = bindToCollection;
 function localStorageKey(firebaseRef, query) {
-    return `firebase-cache-collection:${firebaseRef}:${(query && JSON.stringify(query)) || "all"}`;
+    return "firebase-cache-collection:" + firebaseRef + ":" + ((query && JSON.stringify(query)) || "all");
 }
 function saveToStorage(firebaseRef, query, data, storageObject) {
-    const storage = storageObject || window.localStorage;
+    var storage = storageObject || window.localStorage;
     try {
         storage.setItem(localStorageKey(firebaseRef, query), JSON.stringify(data));
     }
@@ -113,8 +121,8 @@ function saveToStorage(firebaseRef, query, data, storageObject) {
     }
 }
 function checkStorage(firebaseRef, query, storageObject) {
-    const storage = storageObject || window.localStorage;
-    const item = storage.getItem(localStorageKey(firebaseRef, query));
+    var storage = storageObject || window.localStorage;
+    var item = storage.getItem(localStorageKey(firebaseRef, query));
     if (item) {
         return JSON.parse(item);
     }

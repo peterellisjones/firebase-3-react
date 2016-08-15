@@ -10,6 +10,8 @@
 5. Remove _noStructuralTyping from Promise classes
 6. Remove catch() and then() declarations from firebase.Thenable, and extend Promise<t>.
 */
+declare interface Promise<T> {}
+
 declare interface FirebaseService {
   INTERNAL: Object;
   app: firebase.app.App;
