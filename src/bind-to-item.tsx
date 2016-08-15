@@ -27,6 +27,7 @@ type OuterProps<P> = {
   cacheLocally?: boolean;
   storage?: Storage;
   loader?: (props: P) => JSX.Element;
+  debug?: boolean;
 } & P;
 
 interface Storage {
@@ -36,7 +37,7 @@ interface Storage {
 
 export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>): React.ComponentClass<OuterProps<P>> {
   class BindToItem extends React.Component<OuterProps<P>, IState<T>> {
-    private static propKeys = ["firebaseRef", "cacheLocally", "storage", "loader"];
+    private static propKeys = ["debug", "firebaseRef", "cacheLocally", "storage", "loader"];
     private unbind: () => void;
 
     constructor(props: OuterProps<P>) {
@@ -48,6 +49,7 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
     public componentWillReceiveProps(nextProps: OuterProps<P>) {
       // reset if reference changes
       if (this.props.firebaseRef !== nextProps.firebaseRef) {
+        this.debug("Reseting since Firebase reference has changed");
         this.reset(nextProps, true);
       }
     }
@@ -55,24 +57,33 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
     public shouldComponentUpdate(nextProps: OuterProps<P>, nextState: IState<T>): boolean {
       // Yes if reference has changed
       if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+        this.debug("Updating since Firebase reference has changed");
         return true;
       }
 
       // Yes if finished loading
       if (this.state.status === Status.Pending && nextState.status !== Status.Pending) {
+        this.debug("Updating since status has changed");
         return true;
       }
 
       // Yes if user-supplier props have changed
       if (!isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
+        this.debug("Updating since user-supplied props have changed");
         return true;
       }
 
       // Otherwise do deep comparison of data
-      return !isEqual(this.state.data, nextState.data);
+      if (!isEqual(this.state.data, nextState.data)) {
+        this.debug("Updating since data has changed");
+        return true;
+      }
+
+      return false;
     }
 
     public render(): JSX.Element {
+      this.debug("Rendering");
       const innerProps = this.buildInnerProps(this.props);
 
       if (this.state.status === Status.Pending) {
@@ -86,7 +97,9 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
     }
 
     public componentWillUnmount() {
+      this.debug("Unmounting");
       if (this.unbind) {
+        this.debug("Unbinding Firebase listener");
         this.unbind();
       }
     }
@@ -95,20 +108,24 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
       const state: IState<T> = { status: Status.Pending };
 
       if (this.props.cacheLocally) {
+        this.debug("Checking storage for cached data");
         const localStorageData = checkStorage<T>(props.firebaseRef, props.storage);
         if (localStorageData) {
+          this.debug("Cache hit");
           state.data = localStorageData;
           state.status = Status.LoadedFromLocalStorage;
         }
       }
 
       if (this.unbind) {
+        this.debug("Unbinding deprecated Firebase listener");
         this.unbind();
         this.unbind = undefined;
       }
 
       const callback = this.updateData.bind(this);
       const reference = database().ref(props.firebaseRef);
+      this.debug("Registering Firebase listener");
       reference.on("value", callback);
 
       this.unbind = () => {
@@ -145,6 +162,12 @@ export function bindToItem<T, P>(innerKlass: React.ComponentClass<{data: T} & P>
 
       if (this.props.cacheLocally) {
         saveToStorage(this.props.firebaseRef, val, this.props.storage);
+      }
+    }
+
+    private debug(message: string) {
+      if (this.props.debug) {
+        console.log(`bindToItem[${this.props.firebaseRef}]: ${message}`);
       }
     }
   };

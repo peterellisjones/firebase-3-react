@@ -59,7 +59,7 @@ describe('bindToCollection', () => {
     describe('when loader is not specified', () => {
       it('is empty', () => {
         const element = TestUtils.renderIntoDocument(
-          <BoundComments firebaseRef="comments"/>
+          <BoundComments firebaseRef="comments" debug={true} />
         );
 
         expect(ReactDOM.findDOMNode(element)).toEqual(null);
@@ -70,6 +70,7 @@ describe('bindToCollection', () => {
       it('displays the loader', () => {
         const element = TestUtils.renderIntoDocument(
           <BoundComments
+            debug={true}
             firebaseRef="comments"
             loader={() => { return <p>Loading</p>; }}
           />
@@ -83,7 +84,7 @@ describe('bindToCollection', () => {
   describe('when loaded', () => {
     it('passes data to the component class', () => {
       const element = TestUtils.renderIntoDocument(
-        <BoundComments firebaseRef="comments"/>
+        <BoundComments firebaseRef="comments" debug={true} />
       );
 
       callback({ val: () => { return { '0': '123456' }; }});
@@ -95,7 +96,7 @@ describe('bindToCollection', () => {
   describe('when the data changes', () => {
     it('re-renders the component', () => {
       const element = TestUtils.renderIntoDocument(
-        <BoundComments firebaseRef="comments" />
+        <BoundComments firebaseRef="comments" debug={true} />
       );
 
       callback({ val: () => { return { '0': '123456' }; }});
@@ -111,6 +112,7 @@ describe('bindToCollection', () => {
     it('passes the query to firebase', () => {
       const element = TestUtils.renderIntoDocument(
         <BoundComments
+          debug={true}
           firebaseRef="comments"
           firebaseQuery={{ orderByValue: true }}
         />

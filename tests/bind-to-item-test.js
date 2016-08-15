@@ -43,7 +43,7 @@ describe('bindToItem', () => {
     describe('when loader is not specified', () => {
       it('is empty', () => {
         const element = TestUtils.renderIntoDocument(
-          <BoundComment firebaseRef="comments/123"/>
+          <BoundComment debug={true} firebaseRef="comments/123"/>
         );
 
         const node = ReactDOM.findDOMNode(element);
@@ -55,6 +55,7 @@ describe('bindToItem', () => {
       it('displays the loader', () => {
         const element = TestUtils.renderIntoDocument(
           <BoundComment
+            debug={true}
             firebaseRef="comments/123"
             loader={() => { return <p>Loading</p>; }}
           />
@@ -69,7 +70,7 @@ describe('bindToItem', () => {
   describe('when loaded', () => {
     it('passes data to the component class', () => {
       const element = TestUtils.renderIntoDocument(
-        <BoundComment firebaseRef="comments/123"/>
+        <BoundComment debug={true} firebaseRef="comments/123"/>
       );
 
       callback({ val: () => { return '123456'; }});
@@ -82,7 +83,7 @@ describe('bindToItem', () => {
   describe('when the data changes', () => {
     it('re-renders the component', () => {
       const element = TestUtils.renderIntoDocument(
-        <BoundComment firebaseRef="comments/123"/>
+        <BoundComment debug={true} firebaseRef="comments/123"/>
       );
 
       callback({ val: () => { return '123456'; }});

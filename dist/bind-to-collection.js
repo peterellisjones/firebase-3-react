@@ -15,6 +15,7 @@ function bindToCollection(innerKlass) {
             this.reset(props, false);
         }
         BindToCollection.prototype.render = function () {
+            this.debug("Rendering");
             var innerProps = this.buildInnerProps(this.props);
             if (this.state.status === 0) {
                 if (this.props.loader) {
@@ -25,40 +26,54 @@ function bindToCollection(innerKlass) {
             return React.createElement(innerKlass, innerProps);
         };
         BindToCollection.prototype.componentWillUnmount = function () {
+            this.debug("Unmounting");
             if (this.unbind) {
+                this.debug("Unbinding Firebase listener");
                 this.unbind();
             }
         };
         BindToCollection.prototype.shouldComponentUpdate = function (nextProps, nextState) {
             if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+                this.debug("Updating since Firebase reference has changed");
                 return true;
             }
             if (!lodash_1.isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+                this.debug("Updating since Firebase query has changed");
                 return true;
             }
             if (this.state.status === 0 && nextState.status !== 0) {
+                this.debug("Updating since status has changed");
                 return true;
             }
             if (!lodash_1.isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
+                this.debug("Updating since user-supplied props have changed");
                 return true;
             }
-            return !lodash_1.isEqual(this.state.data, nextState.data);
+            if (!lodash_1.isEqual(this.state.data, nextState.data)) {
+                this.debug("Updating since data has changed");
+                return true;
+            }
+            return false;
         };
         BindToCollection.prototype.componentWillReceiveProps = function (nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef || !lodash_1.isEqual(this.props.firebaseQuery, nextProps.firebaseQuery)) {
+                this.debug("Reseting since Firebase reference or query have changed");
                 this.reset(nextProps, true);
             }
         };
         BindToCollection.prototype.reset = function (props, useSetState) {
             var state = { status: 0 };
             if (props.cacheLocally) {
+                this.debug("Checking storage for cached data");
                 var localStorageData = checkStorage(props.firebaseRef, props.firebaseQuery, props.storage);
                 if (localStorageData) {
+                    this.debug("Cache hit");
                     state.data = localStorageData;
                     state.status = 1;
                 }
             }
             if (this.unbind) {
+                this.debug("Unbinding deprecated Firebase listener");
                 this.unbind();
                 this.unbind = undefined;
             }
@@ -67,6 +82,7 @@ function bindToCollection(innerKlass) {
             if (props.firebaseQuery) {
                 reference = applyQuery(reference, props.firebaseQuery);
             }
+            this.debug("Registering Firebase listener");
             reference.on("value", callback);
             this.unbind = function () {
                 reference.off("value", callback);
@@ -101,7 +117,12 @@ function bindToCollection(innerKlass) {
                 saveToStorage(this.props.firebaseRef, this.props.firebaseQuery, val, this.props.storage);
             }
         };
-        BindToCollection.propKeys = ["firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
+        BindToCollection.prototype.debug = function (message) {
+            if (this.props.debug) {
+                console.log("bindToCollection[" + this.props.firebaseRef + "]: " + message);
+            }
+        };
+        BindToCollection.propKeys = ["debug", "firebaseRef", "cacheLocally", "firebaseQuery", "storage", "loader"];
         return BindToCollection;
     }(React.Component));
     ;

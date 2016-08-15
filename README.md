@@ -126,6 +126,8 @@ Here are the properties that can be passed to a bound component created using `b
 
 * **loader** (function, optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
 
+* **debug** (boolean, optional). Set to `true` to log debug messages to the console.
+
 * **...anything else...** Any other properties will be passed directly to the wrapped component.
 
 Example with all options:
@@ -225,6 +227,8 @@ Here are the properties that can be passed to a bound component created using `b
 * **cacheLocally** (boolean, optional) Set this to `true` to cache the data in localStorage. The data will still be fetched from Firebase, but any cached data will be passed to the wrapped component while waiting for the response from Firebase.
 
 * **loader** (function, optional) This is a function returning a JSX element that will be displayed while data is being loaded from Firebase. By default nothing is shown while waiting for Firebase to respond. Note that any properties passed to the bound component will also be passed as an argument to this function.
+
+* **debug** (boolean, optional). Set to `true` to log debug messages to the console.
 
 * **...anything else...** Any other properties will be passed directly to the wrapped component.
 

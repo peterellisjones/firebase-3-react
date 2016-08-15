@@ -16,22 +16,31 @@ function bindToItem(innerKlass) {
         }
         BindToItem.prototype.componentWillReceiveProps = function (nextProps) {
             if (this.props.firebaseRef !== nextProps.firebaseRef) {
+                this.debug("Reseting since Firebase reference has changed");
                 this.reset(nextProps, true);
             }
         };
         BindToItem.prototype.shouldComponentUpdate = function (nextProps, nextState) {
             if (nextProps.firebaseRef !== nextProps.firebaseRef) {
+                this.debug("Updating since Firebase reference has changed");
                 return true;
             }
             if (this.state.status === 0 && nextState.status !== 0) {
+                this.debug("Updating since status has changed");
                 return true;
             }
             if (!lodash_1.isEqual(this.buildOtherProps(this.props), this.buildOtherProps(nextProps))) {
+                this.debug("Updating since user-supplied props have changed");
                 return true;
             }
-            return !lodash_1.isEqual(this.state.data, nextState.data);
+            if (!lodash_1.isEqual(this.state.data, nextState.data)) {
+                this.debug("Updating since data has changed");
+                return true;
+            }
+            return false;
         };
         BindToItem.prototype.render = function () {
+            this.debug("Rendering");
             var innerProps = this.buildInnerProps(this.props);
             if (this.state.status === 0) {
                 if (this.props.loader) {
@@ -42,25 +51,31 @@ function bindToItem(innerKlass) {
             return React.createElement(innerKlass, innerProps);
         };
         BindToItem.prototype.componentWillUnmount = function () {
+            this.debug("Unmounting");
             if (this.unbind) {
+                this.debug("Unbinding Firebase listener");
                 this.unbind();
             }
         };
         BindToItem.prototype.reset = function (props, useSetState) {
             var state = { status: 0 };
             if (this.props.cacheLocally) {
+                this.debug("Checking storage for cached data");
                 var localStorageData = checkStorage(props.firebaseRef, props.storage);
                 if (localStorageData) {
+                    this.debug("Cache hit");
                     state.data = localStorageData;
                     state.status = 1;
                 }
             }
             if (this.unbind) {
+                this.debug("Unbinding deprecated Firebase listener");
                 this.unbind();
                 this.unbind = undefined;
             }
             var callback = this.updateData.bind(this);
             var reference = init_1.database().ref(props.firebaseRef);
+            this.debug("Registering Firebase listener");
             reference.on("value", callback);
             this.unbind = function () {
                 reference.off("value", callback);
@@ -92,7 +107,12 @@ function bindToItem(innerKlass) {
                 saveToStorage(this.props.firebaseRef, val, this.props.storage);
             }
         };
-        BindToItem.propKeys = ["firebaseRef", "cacheLocally", "storage", "loader"];
+        BindToItem.prototype.debug = function (message) {
+            if (this.props.debug) {
+                console.log("bindToItem[" + this.props.firebaseRef + "]: " + message);
+            }
+        };
+        BindToItem.propKeys = ["debug", "firebaseRef", "cacheLocally", "storage", "loader"];
         return BindToItem;
     }(React.Component));
     ;
