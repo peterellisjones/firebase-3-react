@@ -135,6 +135,7 @@ Example with all options:
 ```typescript
 public renderComment(comment_id: string): JSX.Element {
   return <BoundComment
+    debug={true}
     firebaseRef={`comments/${comment_id}`}
     cacheLocally={true}
     loader={(props: any) => { return <p>{"Loading, please wait..."}</p>; }}
@@ -147,6 +148,7 @@ public renderComment(comment_id: string): JSX.Element {
 ```javascript
 function renderComment(comment_id) {
   return <BoundComment
+    debug={true}
     firebaseRef={`comments/${comment_id}`}
     cacheLocally={true}
     loader={(props) => { return <p>{"Loading, please wait..."}</p>; }}
