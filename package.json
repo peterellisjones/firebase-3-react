@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --outDir dist",
     "lint": "tslint src/**/*",
-    "test": "jest --config jest.json"
+    "test": "cp .jest.babelrc .babelrc && jest --no-cache --config jest.json"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,6 @@
   "devDependencies": {
     "babel-jest": "13.2.2",
     "babel-polyfill": "6.9.1",
-    "babel-preset-es2015": "6.13.2",
     "babel-preset-es2015-native-modules": "6.9.0",
     "babel-preset-react": "6.11.1",
     "jest": "13.2.3",
