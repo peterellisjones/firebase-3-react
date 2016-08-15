@@ -7,10 +7,10 @@ require('firebase').initializeApp = () => {
   };
 };
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
-import { init, bindToCollection } from '../dist/index.js';
+const React = require('react');
+const ReactDOM = require('react-dom');
+const TestUtils = require('react-addons-test-utils');
+const { init, bindToCollection } = require('../dist/index.js');
 
 const Comments = class extends React.Component {
   render() {
